@@ -1,0 +1,19 @@
+
+.header{
+    text-align: center;
+}
+
+h1{
+    color: Red;
+}
+
+input{
+    border: 1px solid blue;
+    padding: 10px;
+}
+
+input::placeholder{
+    color: gray;
+    font-size: medium;
+
+}
