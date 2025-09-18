@@ -31,12 +31,23 @@ async def add_note(request:Request):
     inserted_note=conn.FAStApi.note.insert_one(formDict)
     return {"success":True}
 
-@note.get("/note/{note_id}")
-async def notes(note_id:str):
-    data=conn.FAStApi.note.find({"important":True})
-    for d in data:
-        print(d)
-    return {"success":True}  
+from fastapi.responses import JSONResponse
+from bson import ObjectId  # Make sure you import this
+
+@note.get("/api/notes")
+async def notes():
+    docs = conn.FAStApi.note.find({})  
+    newDocs = []
+    for doc in docs:
+        newDocs.append({
+            "id": str(doc["_id"]),  
+            "title": doc.get("title", ""),
+            "desc": doc.get("desc", ""),
+            "important": doc.get("important", False)
+        })
+    return JSONResponse(content=newDocs)
+
+    
 
 @note.get('/about',response_class=HTMLResponse)
 async def read_items(request:Request):
