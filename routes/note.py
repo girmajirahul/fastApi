@@ -11,20 +11,32 @@ templates = Jinja2Templates(directory="templates")
 
 @note.get('/',response_class=HTMLResponse)
 async def read_items(request:Request):
-    docs=conn.FAStApi.notes.find({})
+    docs=conn.FAStApi.note.find({})
     newDocs=[]
     for doc in docs:
         newDocs.append({
             "id":doc["_id"],
-            "note":doc["note"]
+            "title":doc["title"],
+            "desc":doc["desc"],
+            "important":doc["important"]
         })
     return templates.TemplateResponse("index.html",{"request":request,"newDocs":newDocs})
 
 
 @note.post('/')
-def add_note(note:Note):
-    inserted_note=conn.FAStApi.note.insert_one(dict(note))
-    return noteEntity(inserted_note)
+async def add_note(request:Request):
+    form=await request.form()
+    formDict=dict(form)
+    formDict["important"]=True if formDict.get("important")=="on" else False
+    inserted_note=conn.FAStApi.note.insert_one(formDict)
+    return {"success":True}
+
+@note.get("/note/{note_id}")
+async def notes(note_id:str):
+    data=conn.FAStApi.note.find({"important":True})
+    for d in data:
+        print(d)
+    return {"success":True}  
 
 @note.get('/about',response_class=HTMLResponse)
 async def read_items(request:Request):
