@@ -16,9 +16,9 @@ async def read_items(request:Request):
     for doc in docs:
         newDocs.append({
             "id":doc["_id"],
-            "title":doc["title"],
-            "desc":doc["desc"],
-            "important":doc["important"]
+            "title":doc.get("title",""),
+            "desc":doc.get("desc",""),
+            "important":doc.get("important","")
         })
     return templates.TemplateResponse("index.html",{"request":request,"newDocs":newDocs})
 
@@ -32,7 +32,7 @@ async def add_note(request:Request):
     return {"success":True}
 
 from fastapi.responses import JSONResponse
-from bson import ObjectId  # Make sure you import this
+from bson import ObjectId  
 
 @note.get("/api/notes")
 async def notes():
